@@ -2,15 +2,17 @@ import scala.sys.process._
 
 name := "simple-scala-generator"
 organization := "io.grhodes"
-version := "git describe --tags --dirty --always".!!.stripPrefix("v").trim
+version := "1.2.0"
 
-scalaVersion := "2.12.2"
-
-//crossScalaVersions := Seq(scalaVersion.value, "2.11.11", "2.10.6")
+scalaVersion := "2.12.13"
 
 javacOptions in doc := Seq("-encoding", "UTF-8")
 
 licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
+
+githubTokenSource := TokenSource.GitConfig("github.token") || TokenSource.Environment("GITHUB_TOKEN")
+githubOwner := "AYLIEN"
+githubRepository := "simple-scala-generator"
 
 libraryDependencies ++= Seq(
   "io.swagger.codegen.v3" % "swagger-codegen-generators" % "1.0.8",
