@@ -132,7 +132,7 @@ abstract class BaseScalaCodegen extends AbstractScalaCodegen with CodegenConfig 
   }
 
   override def toEnumVarName(value: String, datatype: String): String = {
-    val split = value.split("[ -_]")
+    val split = value.split("[ _-]")
     val safeVal = if(split.nonEmpty) {
       split.map(_.capitalize).mkString
     } else {

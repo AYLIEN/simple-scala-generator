@@ -40,6 +40,11 @@ class ModelEnumNamingTest extends FunSpec with Matchers {
         name shouldBe "Number1"
       }
     }
+
+    it("should leave already camelized values as they are") {
+      val name = codeGen.toEnumVarName("HelloThere", "some_data_type")
+      name shouldBe "HelloThere"
+    }
   }
 
   describe("toEnumValue") {
