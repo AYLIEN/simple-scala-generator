@@ -1,9 +1,10 @@
 package com.meetup.codegen
 
 import io.swagger.v3.oas.models.media._
-import org.scalatest.{FunSpec, Matchers}
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 
-class CustomJavaTimePropertiesTest extends FunSpec with Matchers {
+class CustomJavaTimePropertiesTest extends AnyFunSpec with Matchers {
 
   val codeGen = TestScalaCodegen.getServer
 

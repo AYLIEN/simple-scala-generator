@@ -1,0 +1,16 @@
+/**
+{{#with title}} * = {{{title}}} =
+ *
+{{/with}}
+{{#with description}} * {{{description}}}
+ *
+{{/with}}
+{{#each vars}}
+ * @param {{{name}}} {{#with description}}{{{description}}}{{/with}}
+{{/each}}
+ */
+case class {{classname}} (
+  {{#each vars}}
+  {{{name}}}: {{#unless required}}Option[{{/unless}}{{#unless isEnum}}{{datatype}}{{/unless}}{{#unless required}}]{{/unless}}{{#if hasMore}},{{/if}}
+  {{/each}}
+)

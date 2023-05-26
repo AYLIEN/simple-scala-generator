@@ -3,9 +3,10 @@ package com.meetup.codegen
 import io.grhodes.simple.codegen.BaseScalaCodegen
 
 import io.swagger.codegen.v3.CodegenProperty
-import org.scalatest.{FunSpec, Matchers}
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 
-class ModelEnumNamingTest extends FunSpec with Matchers {
+class ModelEnumNamingTest extends AnyFunSpec with Matchers {
 
   val codeGen = TestScalaCodegen.getServer
 

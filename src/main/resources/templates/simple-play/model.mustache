@@ -1,0 +1,12 @@
+package {{package}}
+
+{{#each models}}
+{{#with model}}
+{{#unless isEnum}}
+{{>class}}
+{{/unless}}
+{{#if isEnum}}
+{{>enum}}
+{{/if}}
+{{/with}}
+{{/each}}
