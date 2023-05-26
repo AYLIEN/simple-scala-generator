@@ -8,15 +8,19 @@ pipeline {
   }
 
   agent {
-    kubernetes {
-      label 'worker-aylien-query-dsl'
-      inheritFrom 'default'
-
-      containerTemplates([
-        containerTemplate(name: 'sbt', image: 'gcr.io/aylien-production/sbt-jdk11', command: 'cat', ttyEnabled: true),
-        containerTemplate(name: 'helm', image: 'gcr.io/aylien-production/helm', command: 'cat', ttyEnabled: true)
-      ])
-    }
+      kubernetes {
+        label 'worker-simple-scala-generator'
+        inheritFrom 'default'
+        containerTemplates([
+          containerTemplate(
+              name: 'sbt',
+              image: 'gcr.io/aylien-production/sbt-jdk11',
+              alwaysPullImage: true,
+              privileged: true,
+              ttyEnabled: true
+          )
+        ])
+      }
   }
 
   stages {
