@@ -13,7 +13,7 @@ pipeline {
       inheritFrom 'default'
 
       containerTemplates([
-        containerTemplate(name: 'sbt', image: 'gcr.io/aylien-production/sbt', command: 'cat', ttyEnabled: true),
+        containerTemplate(name: 'sbt', image: 'gcr.io/aylien-production/sbt-jdk11', command: 'cat', ttyEnabled: true),
         containerTemplate(name: 'helm', image: 'gcr.io/aylien-production/helm', command: 'cat', ttyEnabled: true)
       ])
     }

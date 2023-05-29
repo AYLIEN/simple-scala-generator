@@ -11,7 +11,9 @@ class SimpleScalaCodegen extends BaseScalaCodegen {
   override def getTag(): CodegenType = CodegenType.CLIENT
 
   {
-    cliOptions.add(CliOption.newBoolean(ARG_INCLUDE_SERIALIZATION, "To include or not include serializers in the model classes"))
+    cliOptions.add(
+      CliOption.newBoolean(ARG_INCLUDE_SERIALIZATION, "To include or not include serializers in the model classes")
+    )
     cliOptions.add(CliOption.newString(ARG_SRC_MANAGED_DIRECTORY, "The managed source directory"))
 
     /*

@@ -1,14 +1,15 @@
 package com.meetup.codegen
 
-import java.util.{Arrays => JArrays, HashMap => JHashMap, List => JList, Map => JMap}
+import java.util.{ Arrays => JArrays, HashMap => JHashMap, List => JList, Map => JMap }
 import java.util.Collections
 
-import io.swagger.v3.oas.models.media.{IntegerSchema, NumberSchema, ObjectSchema, Schema, StringSchema}
-import org.scalatest.{FunSpec, Matchers}
+import io.swagger.v3.oas.models.media.{ IntegerSchema, ObjectSchema, Schema, StringSchema }
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 
 import scala.collection.JavaConverters._
 
-class ModelEnumTest extends FunSpec with Matchers {
+class ModelEnumTest extends AnyFunSpec with Matchers {
 
   val codeGen = TestScalaCodegen.getServer
 
@@ -40,10 +41,14 @@ class ModelEnumTest extends FunSpec with Matchers {
     val intEnumProperty = new IntegerSchema
     intEnumProperty.setEnum(JArrays.asList(1, 2))
 
-    val model = new ObjectSchema().properties(mapAsJavaMapConverter(Map[String, Schema[_]](
-      "some_strings" -> stringEnumProperty,
-      "some_ints" -> intEnumProperty
-    )).asJava)
+    val model = new ObjectSchema().properties(
+      mapAsJavaMapConverter(
+        Map[String, Schema[_]](
+          "some_strings" -> stringEnumProperty,
+          "some_ints" -> intEnumProperty
+        )
+      ).asJava
+    )
 
     /*
      * Now push the model through the relevant processing stages. Note that
@@ -100,25 +105,14 @@ class ModelEnumTest extends FunSpec with Matchers {
 
     it("should have enum instance names properly mangled") {
       properties.foreach { property =>
-
         val rawAllowedValues =
-          property
-            .allowableValues.get("values")
-            .asInstanceOf[JList[AnyRef]]
-            .asScala
-            .map(_.toString)
+          property.allowableValues.get("values").asInstanceOf[JList[AnyRef]].asScala.map(_.toString)
 
         val expectedNames =
-          rawAllowedValues.map { v =>
-            codeGen.toEnumVarName(v, property.datatype)
-          }.toSet
+          rawAllowedValues.map(v => codeGen.toEnumVarName(v, property.datatype)).toSet
 
         val actualNames =
-          property
-            .allowableValues.get("enumVars")
-            .asInstanceOf[JList[JMap[String, String]]]
-            .asScala
-            .map(_.get("name"))
+          property.allowableValues.get("enumVars").asInstanceOf[JList[JMap[String, String]]].asScala.map(_.get("name"))
 
         actualNames.forall(expectedNames.contains) shouldBe true
       }
@@ -127,18 +121,10 @@ class ModelEnumTest extends FunSpec with Matchers {
     it("should have enum instance values properly escaped") {
       properties.foreach { property =>
         val rawAllowedValues =
-          property
-            .allowableValues.get("values")
-            .asInstanceOf[JList[AnyRef]]
-            .asScala
-            .map(_.toString)
+          property.allowableValues.get("values").asInstanceOf[JList[AnyRef]].asScala.map(_.toString)
 
         val actualValues =
-          property
-            .allowableValues.get("enumVars")
-            .asInstanceOf[JList[JMap[String, String]]]
-            .asScala
-            .map(_.get("value"))
+          property.allowableValues.get("enumVars").asInstanceOf[JList[JMap[String, String]]].asScala.map(_.get("value"))
 
         rawAllowedValues.zip(actualValues).foreach {
           case (raw, actual) => actual shouldBe codeGen.toEnumValue(raw, property.datatype)

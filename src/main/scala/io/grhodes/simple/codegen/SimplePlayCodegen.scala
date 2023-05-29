@@ -4,6 +4,10 @@ import io.swagger.codegen.v3._
 
 import scala.collection.JavaConverters._
 
+object SimplePlayCodegen {
+  val ARG_SKIP_ROUTES_GENERATION = "skipRouteGeneration"
+}
+
 class SimplePlayCodegen extends BaseScalaCodegen {
   import BaseScalaCodegen._
 
@@ -12,8 +16,13 @@ class SimplePlayCodegen extends BaseScalaCodegen {
   override def getTag(): CodegenType = CodegenType.CLIENT
   override def getName(): String = "simple-play"
 
+  private def skipRouteGeneration: Boolean =
+    Option(additionalProperties.get(SimplePlayCodegen.ARG_SKIP_ROUTES_GENERATION)).exists(_.toString.toBoolean)
+
   {
-    cliOptions.add(CliOption.newBoolean(ARG_INCLUDE_SERIALIZATION, "To include or not include serializers in the model classes"))
+    cliOptions.add(
+      CliOption.newBoolean(ARG_INCLUDE_SERIALIZATION, "To include or not include serializers in the model classes")
+    )
     cliOptions.add(CliOption.newString(ARG_SRC_MANAGED_DIRECTORY, "The managed source directory"))
 
     /*
@@ -29,7 +38,7 @@ class SimplePlayCodegen extends BaseScalaCodegen {
 
     supportingFiles = List(
       new SupportingFile("routes.mustache", "conf", "generated.routes")
-    ).asJava
+    ).filter(_ => skipRouteGeneration).asJava
 
     /*
      * Model Package.  Optional, if needed, this can be used in templates

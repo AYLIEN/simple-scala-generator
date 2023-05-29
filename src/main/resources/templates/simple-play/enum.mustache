@@ -1,0 +1,22 @@
+sealed abstract class {{#with datatypeWithEnum}}{{.}}{{/with}}{{#unless datatypeWithEnum}}{{classname}}{{/unless}}(val value: {{#with dataType}}{{.}}{{/with}}{{#unless dataType}}{{datatype}}{{/unless}}) extends Product with Serializable
+object {{#with datatypeWithEnum}}{{.}}{{/with}}{{#unless datatypeWithEnum}}{{classname}}{{/unless}} {
+  {{#allowableValues}}{{#each enumVars}}case object {{name}} extends {{#with datatypeWithEnum}}{{.}}{{/with}}{{#unless datatypeWithEnum}}{{classname}}{{/unless}}({{{value}}})
+  {{/each}}{{/allowableValues}}
+
+  private val valueMap = Map(
+    {{#allowableValues}}{{#each enumVars}}{{{value}}} -> {{name}}{{#unless @last}},
+    {{/unless}}{{/each}}{{/allowableValues}}
+  )
+
+  /**
+   * The set of `{{#with datatypeWithEnum}}{{.}}{{/with}}{{#unless datatypeWithEnum}}{{classname}}{{/unless}}` instances.
+   */
+  val values: Set[{{#with datatypeWithEnum}}{{.}}{{/with}}{{#unless datatypeWithEnum}}{{classname}}{{/unless}}] = valueMap.values.toSet
+
+  /**
+   * Get the `{{#with datatypeWithEnum}}{{.}}{{/with}}{{#unless datatypeWithEnum}}{{classname}}{{/unless}}` instance mapped by the given {{#with dataType}}{{.}}{{/with}}{{#unless dataType}}{{datatype}}{{/unless}} value,
+   * if there is one.
+   */
+  def fromValue(value: {{#with dataType}}{{.}}{{/with}}{{#unless dataType}}{{datatype}}{{/unless}}): Option[{{#with datatypeWithEnum}}{{.}}{{/with}}{{#unless datatypeWithEnum}}{{classname}}{{/unless}}] = valueMap.get(value)
+
+}

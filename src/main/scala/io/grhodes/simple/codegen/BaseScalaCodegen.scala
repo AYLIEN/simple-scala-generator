@@ -5,23 +5,16 @@ import java.util.concurrent.atomic.AtomicReference
 import java.util.regex.Pattern
 
 import io.swagger.codegen.v3.generators.DefaultCodegenConfig
-import io.swagger.codegen.v3.{CodegenConfig, CodegenConstants, CodegenOperation, CodegenProperty}
+import io.swagger.codegen.v3.{ CodegenConfig, CodegenConstants, CodegenOperation, CodegenProperty }
 import io.swagger.codegen.v3.generators.scala.AbstractScalaCodegen
-import io.swagger.v3.oas.models.media.{Schema, StringSchema}
-import org.apache.commons.lang3.StringUtils
+import io.swagger.v3.oas.models.media.{ Schema, StringSchema }
 
 import scala.collection.JavaConverters._
 
 object BaseScalaCodegen {
   val ARG_SRC_MANAGED_DIRECTORY = "sourceManagedDir"
   val ARG_INCLUDE_SERIALIZATION = "includeSerialization"
-  val NUMBER_TYPES = Set("Int", "Long", "Float", "Double")
-
-  def camelize(parts: Array[String]): String = {
-    val sb = new StringBuilder()
-    parts.foreach(s => sb.append(StringUtils.capitalize(s)))
-    sb.toString()
-  }
+  val NUMBER_TYPES: Set[String] = Set("Int", "Long", "Float", "Double")
 }
 
 abstract class BaseScalaCodegen extends AbstractScalaCodegen with CodegenConfig {
@@ -30,9 +23,9 @@ abstract class BaseScalaCodegen extends AbstractScalaCodegen with CodegenConfig 
   protected val invokerPackage = new AtomicReference[String]("swagger.models")
 
   /*
-    * Lifted from https://github.com/swagger-api/swagger-codegen/blob/master/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/AbstractScalaCodegen.java#L182-L185
-    * to prevent injection.
-    */
+   * Lifted from https://github.com/swagger-api/swagger-codegen/blob/master/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/AbstractScalaCodegen.java#L182-L185
+   * to prevent injection.
+   */
   override def escapeUnsafeCharacters(input: String): String = input.replace("*/", "*_/").replace("/*", "/_*")
 
   override def escapeQuotationMark(input: String): String = input.replace("\"", "\\\"")
@@ -44,28 +37,23 @@ abstract class BaseScalaCodegen extends AbstractScalaCodegen with CodegenConfig 
     additionalProperties.put(CodegenConstants.INVOKER_PACKAGE, invokerPackage.get())
 
     val givenModelPkg = Option(additionalProperties.get(CodegenConstants.MODEL_PACKAGE)).map(_.toString)
-    modelPackage = givenModelPkg
-      .orElse(Option(invokerPackage.get()).filter(_.nonEmpty).map(_  + ".model"))
-      .getOrElse("model")
+    modelPackage =
+      givenModelPkg.orElse(Option(invokerPackage.get()).filter(_.nonEmpty).map(_ + ".model")).getOrElse("model")
 
     val givenApiPkg = Option(additionalProperties.get(CodegenConstants.API_PACKAGE)).map(_.toString)
-    apiPackage = givenApiPkg
-      .orElse(Option(invokerPackage.get()).filter(_.nonEmpty).map(_  + ".api"))
-      .getOrElse("api")
+    apiPackage = givenApiPkg.orElse(Option(invokerPackage.get()).filter(_.nonEmpty).map(_ + ".api")).getOrElse("api")
 
     val incSer = additionalProperties.get(ARG_INCLUDE_SERIALIZATION)
     val includeSerialization: java.lang.Boolean = Option(incSer).forall(java.lang.Boolean.TRUE.toString.equals(_))
     additionalProperties.put(ARG_INCLUDE_SERIALIZATION, includeSerialization)
 
     val managedSrcOpt = Option(additionalProperties.get(ARG_SRC_MANAGED_DIRECTORY)).map(_.toString)
-    managedSrcOpt.foreach { managedSrc =>
-      sourceFolder = managedSrc.substring(outputFolder.length)
-    }
+    managedSrcOpt.foreach(managedSrc => sourceFolder = managedSrc.substring(outputFolder.length))
   }
 
   override def postProcessModels(objs: util.Map[String, AnyRef]): util.Map[String, AnyRef] = {
     val imports = objs.get("imports").asInstanceOf[util.List[util.Map[String, String]]].asScala
-    val prefix = Option(modelPackage()).filter(_.nonEmpty).map(_  + ".").getOrElse("")
+    val prefix = Option(modelPackage()).filter(_.nonEmpty).map(_ + ".").getOrElse("")
     val objects = Map(objs.asScala.toSeq: _*) ++ Map(
       "imports" -> imports.filterNot(_.get("import").startsWith(prefix)).asJava
     )
@@ -127,13 +115,12 @@ abstract class BaseScalaCodegen extends AbstractScalaCodegen with CodegenConfig 
     }
   }
 
-  override def toEnumName(property: CodegenProperty): String = {
+  override def toEnumName(property: CodegenProperty): String =
     property.name.split("[\\s-_]").map(_.capitalize).mkString
-  }
 
   override def toEnumVarName(value: String, datatype: String): String = {
     val split = value.split("[ _-]")
-    val safeVal = if(split.nonEmpty) {
+    val safeVal = if (split.nonEmpty) {
       split.map(_.capitalize).mkString
     } else {
       value.capitalize
